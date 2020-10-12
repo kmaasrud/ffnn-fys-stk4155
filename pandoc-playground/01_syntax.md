@@ -17,3 +17,5 @@ The syntax is a superset of the Markdown syntax, which I'm sure you all know. In
 - Cross-referencing:
 
     You can cross reference by appending an equation, figure or similar with `{#eq:my-id}` or similar. This is then referenced in the text with `@eq:my-id`. For example, this section is labelled with `{#sec:syntax}`, which i can reference by typing `@sec:syntax`, like this: section @sec:syntax. Cross-referencing requires an extension, the installation of which is described in section @sec:install-xnos
+    
+- ...and lots more
