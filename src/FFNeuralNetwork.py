@@ -73,13 +73,14 @@ class FFNeuralNetwork():
     def weights_and_biases(self):
         """
         Function that initializes the weights and biases randomly, using a 
-        Gaussian distribution with mean 0, and variance 1.  The first
+        Gaussian distribution with mean 0, and variance 1 over the square   
+        root of the number of weights connecting to the same neuron. The first
         layer is assumed to be an input layer, and by convention, no 
         biases are set for those neurons.  (Since biases are only used in 
         computing the outputs from later layers.)
         """
         self.biases = [np.random.randn(y, 1) for y in self.nodes[1:]]
-        self.weights = [np.random.randn(y, x)
+        self.weights = [np.random.randn(y, x)/np.sqrt(x)
                         for x, y in zip(self.nodes[:-1], self.nodes[1:])]
     
     
