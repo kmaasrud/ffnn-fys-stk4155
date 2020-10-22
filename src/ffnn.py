@@ -10,16 +10,14 @@ from utils import sigmoid
 np.random.seed(2020) # set random seed for reproducibility 
 
 
-class FFNN():
-    def __init__(self, X, y,
-            n_layers,
-            nodes,
-            n_classes,
+class FFNN:
+    def __init__(self, X, y, n_layers, hidden_layers,
+            # kwargs
             epochs=10,
             batch_size=100,
             eta=0.1,
             problem_type="classification",
-            activation="sigmoid"):
+            activation_function=sigmoid):
         """
         Initialize the feedforward neural network. 
 
@@ -29,15 +27,11 @@ class FFNN():
             x-data.
         y : ndarray
             y-data.
-        n_layers : int
-            Number of hidden layers.
-        nodes : list
+        hidden_layers : list
             Cointains the number of nodes in the hidden layers. E.g. if 
-            n_nodes is [3, 2, 4] we have a three-layer network, with 3 neurons 
-            in the first layer, 2 neurons in the second layer and 4 neurons in 
-            the third layer. 
-        n_classes : int
-            Number of output classes
+            n_nodes is [3, 2, 4] we have a five network (including IO), with 3 neurons 
+            in the first hidden layer, 2 neurons in the second hiddenlayer and 4 neurons
+            in the third hidden layer. 
         epochs : int, optional
             The default is 10.
         batch_size : int, optional
@@ -57,29 +51,25 @@ class FFNN():
         
         # variables
         self.n_inputs, self.n_features = X.shape
-        self.n_layers = n_layers
-        self.nodes = nodes 
-        self.n_classes = n_classes
+        self.n_outputs = len(y)
+        self.n_layers = len(hidden_layers) + 2
+        self.nodes = [self.n_inputs] + hidden_layers + [self.n_outputs]
         self.epochs = epochs
         self.batch_size = batch_size
         self.eta = eta
         self.problem_type = problem_type
-        self.activation = activation
+        self.activation_function = activation_function
               
-        # weights and biases
-        self.weights_and_biases()
+        # Initialize weights and biases with random values. Each weight-bias pair corresponds to a connection between
+        # a layer and the neurons in the next layer.
         
-    def weights_and_biases(self):
-        """
-        Function that initializes the weights and biases randomly, using a 
-        Gaussian distribution with mean 0, and variance 1 over the square   
-        root of the number of weights connecting to the same neuron. The first
-        layer is assumed to be an input layer, and by convention, no 
-        biases are set for those neurons.  (Since biases are only used in 
-        computing the outputs from later layers.)
-        """
-        self.biases = [np.random.randn(y, 1) for y in self.nodes[1:]]
+        # Make vectors of biases that correspond to the size of each layer.
+        # Each layer's bias-vector is an array on the form array([b1, b2, ...])
+        self.biases = [np.random.randn(layer_size) for layer_size in self.nodes[1:]]
+        # Make weight-vectors for each neuron in each layer.
+        # Each layer's weight-matrix is an array on the form array([[w11, w12, ...], [w21, w22, ...], ...])
         self.weights = [np.random.randn(y, x) / np.sqrt(x) for x, y in zip(self.nodes[:-1], self.nodes[1:])]
+        # TODO: Why divide by sqrt(x)? Shouldn't this just initialize randomly?
     
     
     def feed_forward(self, X):
@@ -87,7 +77,7 @@ class FFNN():
         Function that returns the output of the network if ``x``is the input.
         """
         for b, w in zip(self.biases, self.weights):
-            X = sigmoid(np.dot(w, X)+b)
+            X = self.activation_function(np.dot(w, X)+b)
         return X
 
 
