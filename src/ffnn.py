@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 """
 A module implementation of the stochastic gradient descent algorithm for a 
 feedforward neural network. 
@@ -8,10 +5,12 @@ feedforward neural network.
 import random
 import numpy as np
 
+from utils import sigmoid
+
 np.random.seed(2020) # set random seed for reproducibility 
 
 
-class FFNeuralNetwork():
+class FFNN():
     def __init__(self, X, y,
             n_layers,
             nodes,
@@ -42,7 +41,7 @@ class FFNeuralNetwork():
         epochs : int, optional
             The default is 10.
         batch_size : int, optional
-            Size of mini-batces for the stochastic gradient descent. 
+            Size of mini-batches for the stochastic gradient descent. 
             The default is 100.
         eta : float, optional
             Learning rate. The default is 0.1.
@@ -80,8 +79,7 @@ class FFNeuralNetwork():
         computing the outputs from later layers.)
         """
         self.biases = [np.random.randn(y, 1) for y in self.nodes[1:]]
-        self.weights = [np.random.randn(y, x)/np.sqrt(x)
-                        for x, y in zip(self.nodes[:-1], self.nodes[1:])]
+        self.weights = [np.random.randn(y, x) / np.sqrt(x) for x, y in zip(self.nodes[:-1], self.nodes[1:])]
     
     
     def feed_forward(self, X):
@@ -89,7 +87,7 @@ class FFNeuralNetwork():
         Function that returns the output of the network if ``x``is the input.
         """
         for b, w in zip(self.biases, self.weights):
-            X = self.sigmoid(np.dot(w, X)+b)
+            X = sigmoid(np.dot(w, X)+b)
         return X
 
 
@@ -107,16 +105,16 @@ class FFNeuralNetwork():
         
         n = len(train_data)
         
-        for j in range(epochs):
+        for _ in range(epochs):
             random.shuffle(train_data)
-            mini_batches = [
-                train_data[k:k+batch_size]
-                for k in range(0, n, batch_size)]
+
+            mini_batches = [train_data[k:k+batch_size] for k in range(0, n, batch_size)]
+
             for mini_batch in mini_batches:
                 self.update_mini_batch(mini_batch, eta)
 
     
-    def update_mini_batches(self, batch, eta):
+    def update_mini_batch(self, batch, eta):
         """
         Function that updates the networks's weights and biases by applying 
         gradient descent using backpropagation to a singel mini-batch. 
@@ -126,13 +124,12 @@ class FFNeuralNetwork():
         nabla_w = [np.empty(w.shape) for w in self.weights]
         
         for X, y in batch:
-            d_nabla_b, d_nabla_w = self.backprop(X, y)
+            d_nabla_b, d_nabla_w = self.backpropagate(X, y)
             nabla_b = [nb+dnb for nb, dnb in zip(nabla_b, d_nabla_b)]
             nabla_w = [nw+dnw for nw, dnw in zip(nabla_w, d_nabla_w)]
-        self.weights = [w-(eta/len(batch))*nw
-                        for w, nw in zip(self.weights, nabla_w)]
-        self.biases = [b-(eta/len(batch))*nb
-                       for b, nb in zip(self.biases, nabla_b)]
+
+        self.weights = [w - (eta/len(batch)) * nw for w, nw in zip(self.weights, nabla_w)]
+        self.biases = [b - (eta/len(batch)) * nb for b, nb in zip(self.biases, nabla_b)]
         
     
     def backpropagate(self, X, y):
@@ -165,47 +162,3 @@ class FFNeuralNetwork():
             nabla_b[-l] = delta
             nabla_w[-l] = np.dot(delta, activations[-l-1].transpose())
         return (nabla_b, nabla_w)
-    
-    
-    # Activation functions:
-    # sigmoid function hard coded in the class as of now
-    @staticmethod
-    def sigmoid(z):
-        """ The sigmoid function. """
-        return 1.0 / (1.0 + np.exp(-z))
-    
-    @staticmethod
-    def sigmoid_derivative(z):
-        """ Derivative of the sigmoid function. """
-        return FFNeuralNetwork.sigmoid(z) * (1 - FFNeuralNetwork.sigmoid(z))
-    
-    
-    @staticmethod
-    def ReLU(z):
-        """ The ReLU function. """
-        return max(0.0, z)
-    
-    
-    @staticmethod
-    def ReLU_derivative(z):
-        """ Derivative of the ReLU function. """
-        return np.heavyside(z, 1)
-    
-    
-    @staticmethod
-    def leaky_ReLU(z):
-        """ The Leaky ReLUfunction. """
-        idx = np.where(z <= 0)
-        z[idx] = 0.01 * z
-        return z
-    
-    
-    @staticmethod
-    def leaky_ReLU_derivative(z):
-        """ Derivative of the Leaky ReLU function. """
-        idx1 = np.where(z < 0)
-        z[idx1] = 0.01 
-        
-        idx2 = np.where(z > 0)
-        z[idx2] = 1.0 
-        return z

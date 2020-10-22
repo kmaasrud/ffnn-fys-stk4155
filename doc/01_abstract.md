@@ -1,3 +1,0 @@
-\begin{abstract}
-This is an abstract.
-\end{abstract}
