@@ -16,15 +16,13 @@ class FFNN:
             epochs=10,
             batch_size=100,
             eta=0.1,
-            problem_type="classification",
             activation_function=sigmoid):
-        """
-        Initialize the feedforward neural network. 
+        """Initialize the feedforward neural network. 
 
-        Parameters
+        Arguments
         ----------
         X : ndarray
-            x-data.
+            Input data.
         y : ndarray
             y-data.
         hidden_layers : list
@@ -32,17 +30,19 @@ class FFNN:
             n_nodes is [3, 2, 4] we have a five network (including IO), with 3 neurons 
             in the first hidden layer, 2 neurons in the second hiddenlayer and 4 neurons
             in the third hidden layer. 
-        epochs : int, optional
+        
+        Keyword arguments
+        -----------------
+        epochs : int
             The default is 10.
-        batch_size : int, optional
+        batch_size : int
             Size of mini-batches for the stochastic gradient descent. 
             The default is 100.
-        eta : float, optional
+        eta : float
             Learning rate. The default is 0.1.
-        problem_type : str, optional
-            Problemtype The default is "classification".
-        activation : str, optional
-            Activation functions: sigmoid, ReLU and leaky_ReLU. The default is "sigmoid".
+        activation : function
+            Activation function.
+            The default is utils.sigmoid.
         """
         
         # data
@@ -51,13 +51,12 @@ class FFNN:
         
         # variables
         self.n_inputs, self.n_features = X.shape
-        self.n_outputs = len(y)
+        self.n_outputs, self.n_output_features = y.shape
         self.n_layers = len(hidden_layers) + 2
-        self.nodes = [self.n_inputs] + hidden_layers + [self.n_outputs]
+        self.nodes = [self.n_features] + hidden_layers + [self.n_output_features]
         self.epochs = epochs
         self.batch_size = batch_size
         self.eta = eta
-        self.problem_type = problem_type
         self.activation_function = activation_function
               
         # Initialize weights and biases with random values. Each weight-bias pair corresponds to a connection between
@@ -72,10 +71,9 @@ class FFNN:
         # TODO: Why divide by sqrt(x)? Shouldn't this just initialize randomly?
     
     
-    def feed_forward(self, X):
-        """
-        Function that returns the output of the network if ``x``is the input.
-        """
+    def feed_forward(self):
+        """Function that returns the output of the network if ``x``is the input."""
+        X = self.X
         for b, w in zip(self.biases, self.weights):
             X = self.activation_function(np.dot(w, X)+b)
         return X
