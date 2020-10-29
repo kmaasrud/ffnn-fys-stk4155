@@ -1,0 +1,58 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}   % Images
+\usepackage{subfiles}   % Include subfiles
+\usepackage{hyperref}   % Nice referencing with clickable links
+\usepackage{amsmath}    % Math
+\usepackage[bakend=bibtex,style=ieee]{biblatex}   % Citations
+\usepackage{csquotes}   % Honestly no idea what this does...
+\usepackage{minted}
+\usepackage{comment}
+\usepackage{amssymb}
+\usepackage[parfill]{parskip}
+\usepackage{pythonhighlight}
+\usepackage{gensymb}
+\usepackage{cleveref}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+
+\graphicspath{{img/}{../img/}}
+\bibliography{references.bib}
+
+%\setlength{\parindent}{0pt}
+
+\title{Applying Regression and Resampling Techniques to Norwegian Terrain Data with Franke's Function as Test Function}
+\author{Knut Magnus Aasrud \\ Philip Karim Niane \\ Ida Due-Sørensen}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\subfile{sections/abstract}
+
+\subfile{sections/introduction}
+
+\subfile{sections/theory}
+
+\subfile{sections/method}
+
+\subfile{sections/results}
+
+\subfile{sections/discussion}
+
+\subfile{sections/conclusion}
+
+\printbibliography
+\clearpage
+\appendix
+\subfile{sections/appendix}
+
+
+%\bibliographystyle{apalike}
+
+
+\end{document}
