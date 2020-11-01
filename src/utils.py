@@ -24,8 +24,12 @@ def leaky_ReLU(x):
 def leaky_ReLU_derivative(x):
     """ Derivative of the Leaky ReLU function. """
     idx1 = np.where(x < 0)
-    x[idx1] = 0.01 
-    
+    x[idx1] = 0.01
+
     idx2 = np.where(x > 0)
-    x[idx2] = 1.0 
+    x[idx2] = 1.0
     return x
+
+def accuracy(y, y_pred):
+    numerator=np.sum(y == y_pred)
+    return numerator/len(y)
