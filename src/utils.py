@@ -42,3 +42,7 @@ def MSE(x, y):
     for xval, yval in zip(x, y):
         s += (xval - yval)**2
     return s / (2 * len(x))
+
+def accuracy(y, y_pred):
+    numerator=np.sum(y == y_pred)
+    return numerator/len(y)
