@@ -5,55 +5,39 @@ feedforward neural network.
 import random
 import numpy as np
 
-from utils import sigmoid
+from utils import sigmoid, sigmoid_derivative, MSE
 
 np.random.seed(2020) # set random seed for reproducibility 
 
 
 class FFNN:
-    def __init__(self, X, y, n_layers, hidden_layers,
-            # kwargs
-            epochs=10,
-            batch_size=100,
-            eta=0.1,
-            activation_function=sigmoid):
+    def __init__(self, layers, epochs=10, batch_size=100, eta=0.1, activation_function=sigmoid):
         """Initialize the feedforward neural network. 
 
         Arguments
         ----------
-        X : ndarray
-            Input data.
-        y : ndarray
-            y-data.
-        hidden_layers : list
-            Cointains the number of nodes in the hidden layers. E.g. if 
-            n_nodes is [3, 2, 4] we have a five network (including IO), with 3 neurons 
-            in the first hidden layer, 2 neurons in the second hiddenlayer and 4 neurons
-            in the third hidden layer. 
+        layers : list
+            Cointains the number of nodes in the layers. E.g. if 
+            layers is [3, 2, 4] we have a three layer network, with 3 neurons 
+            in the first (input) layer, 2 neurons in the second (hidden) layer
+            and 4 neurons in the third (output) layer. 
         
         Keyword arguments
         -----------------
         epochs : int
-            The default is 10.
+            Number of epochs. The default is 10.
         batch_size : int
             Size of mini-batches for the stochastic gradient descent. 
             The default is 100.
         eta : float
             Learning rate. The default is 0.1.
         activation : function
-            Activation function.
-            The default is utils.sigmoid.
+            Activation function. The default is utils.sigmoid.
         """
         
-        # data
-        self.X = X
-        self.y = y
-        
         # variables
-        self.n_inputs, self.n_features = X.shape
-        self.n_outputs, self.n_output_features = y.shape
-        self.n_layers = len(hidden_layers) + 2
-        self.nodes = [self.n_features] + hidden_layers + [self.n_output_features]
+        self.n_layers = len(layers)
+        self.layers = layers
         self.epochs = epochs
         self.batch_size = batch_size
         self.eta = eta
@@ -64,89 +48,82 @@ class FFNN:
         
         # Make vectors of biases that correspond to the size of each layer.
         # Each layer's bias-vector is an array on the form array([b1, b2, ...])
-        self.biases = [np.random.randn(layer_size) for layer_size in self.nodes[1:]]
+        self.biases = [np.random.randn(layer_size) for layer_size in self.layers[1:]]
         # Make weight-vectors for each neuron in each layer.
         # Each layer's weight-matrix is an array on the form array([[w11, w12, ...], [w21, w22, ...], ...])
-        self.weights = [np.random.randn(y, x) / np.sqrt(x) for x, y in zip(self.nodes[:-1], self.nodes[1:])]
-        # TODO: Why divide by sqrt(x)? Shouldn't this just initialize randomly?
+        self.weights = [np.random.randn(y, x) for x, y in zip(self.layers[:-1], self.layers[1:])]
     
     
-    def feed_forward(self):
-        """Function that returns the output of the network if ``x``is the input."""
-        X = self.X
-        for b, w in zip(self.biases, self.weights):
-            X = self.activation_function(np.dot(w, X)+b)
-        return X
+    def predict(self, X):
+        """Function that returns the output of the network, given an input X."""
+        return self.feed_forward(X)[-1]
+    
+
+    def feed_forward(self, X, include_weighted_inputs=False):
+        """Function that feeds forward the input X and stores all the layers' activations in a list it returns.
+        Optionally, it can also return the weighted inputs, which are useful in the backpropagation algorithm."""        
+        activations = [X]
+        if include_weighted_inputs: weighted_inputs = []
+        for b, w in zip(self.biases,self.weights):
+            weighted_input = np.dot(w, X) + b
+            activations.append(self.activation_function(weighted_input))
+            if include_weighted_inputs: weighted_inputs.append(weighted_input) 
+            
+        if include_weighted_inputs:
+            return activations, weighted_inputs 
+        return activations
 
 
-    def SDG(self, X_train, y_train, epochs, batch_size, eta):
-        """" 
-        Function that trains the neural network using mini-batch stochastic 
-        gradient descencent. 
+    def SGD(self, X_train, y_train):
+        """" Function that trains the neural network using mini-batch stochastic gradient descencent. 
         
         TODO:
             Add test_data as optional argument and evaluate the network against 
-            the test data after each epoch if test data provided. 
-        """
+            the test data after each epoch if test data provided."""
         
         train_data = tuple(zip(X_train, y_train))
         
         n = len(train_data)
         
-        for _ in range(epochs):
+        # Quadruple for loop!!! There's probably some possible numba-improvements here, but that'll have to wait
+        for _ in range(self.epochs):
             random.shuffle(train_data)
 
-            mini_batches = [train_data[k:k+batch_size] for k in range(0, n, batch_size)]
+            mini_batches = [train_data[k:k+self.batch_size] for k in range(0, n, self.batch_size)]
 
             for mini_batch in mini_batches:
-                self.update_mini_batch(mini_batch, eta)
+                sum_nabla_b = [np.empty(b.shape) for b in self.biases]
+                sum_nabla_w = [np.empty(w.shape) for w in self.weights]
+                
+                for X, y in mini_batch:
+                    nabla_b, nabla_w = self.backpropagate(X, y)
+                    sum_nabla_b = [snb+nb for snb, nb in zip(sum_nabla_b, nabla_b)]
+                    sum_nabla_w = [snw+nw for snw, nw in zip(sum_nabla_w, nabla_w)]
 
-    
-    def update_mini_batch(self, batch, eta):
-        """
-        Function that updates the networks's weights and biases by applying 
-        gradient descent using backpropagation to a singel mini-batch. 
-        """
-        
-        nabla_b = [np.empty(b.shape) for b in self.biases]
-        nabla_w = [np.empty(w.shape) for w in self.weights]
-        
-        for X, y in batch:
-            d_nabla_b, d_nabla_w = self.backpropagate(X, y)
-            nabla_b = [nb+dnb for nb, dnb in zip(nabla_b, d_nabla_b)]
-            nabla_w = [nw+dnw for nw, dnw in zip(nabla_w, d_nabla_w)]
-
-        self.weights = [w - (eta/len(batch)) * nw for w, nw in zip(self.weights, nabla_w)]
-        self.biases = [b - (eta/len(batch)) * nb for b, nb in zip(self.biases, nabla_b)]
+                self.weights = [w - (self.eta/len(mini_batch)) * snw for w, snw in zip(self.weights, sum_nabla_w)]
+                self.biases = [b - (self.eta/len(mini_batch)) * snb for b, snb in zip(self.biases, sum_nabla_b)]
         
     
     def backpropagate(self, X, y):
-        
         nabla_b = [np.empty(b.shape) for b in self.biases]
         nabla_w = [np.empty(w.shape) for w in self.weights]
         
-        # feedforward
-        activation = X
-        activations = [X] # list to store all the activations, layer by layer
-        zs = [] # list to store all the z vectors, layer by layer
-        for b, w in zip(self.biases, self.weights):
-            z = np.dot(w, activation)+b
-            zs.append(z)
-            activation = self.sigmoid(z)
-            activations.append(activation)
+        activations, weighted_inputs = self.feed_forward(X, include_weighted_inputs=True)
         
-        # backward pass
+        # This is a hard-coded derivative, assuming a cost function that reads 1/2 (x-y)^2 (quadratic cost, divided by 2)
         cost_derivative = activations[-1] - y
-        delta = cost_derivative * self.sigmoid_derivative(zs[-1])
+        
+        # INFO1: * is the Hadamard product in numpy, doing element-wise multiplication. Beware that this is only supported by
+        # Python 3.5 and above. Else, numpy.multiply might have to be used instead.
+        delta = cost_derivative * self.activation_function(weighted_inputs[-1], derivative=True)
         nabla_b[-1] = delta
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())
-        
-        # l = 1 is the last layer of neurons, l = 2 is the
-        # second-last layer ...
+         
         for l in range(2, self.n_layers):
-            z = zs[-l]
-            sp = self.sigmoid_derivative(z)
-            delta = np.dot(self.weights[-l+1].transpose(), delta) * sp
+            cost_derivative = np.dot(self.weights[-l+1].transpose(), delta) 
+            # See INFO1 above.
+            delta = cost_derivative * self.activation_function(weighted_inputs[-l], derivative=True)
             nabla_b[-l] = delta
             nabla_w[-l] = np.dot(delta, activations[-l-1].transpose())
-        return (nabla_b, nabla_w)
+            
+        return nabla_b, nabla_w
