@@ -1,50 +1,54 @@
-# Import scikit regression tools
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-
+# Import modules and neededfunctions
 import numpy as np
+from utils import sigmoid
 
-np.random.seed(2020) # set random seed for reproducibility
-"""
-The class is not done yet
-"""
+# set random seed for reproducibility
+np.random.seed(2020)
+
 class LogReg:
-    def __init__(self, X, y, predictor_names = None):
-        self.y = y
-        self.X = X
+    def __init__(self, X_train, y_train, predictor_names = None):
+        self.y_train = y_train
+        self.X_train = X_train
 
-    def SGD(self, X_train, y_train, epochs, batch_size):
+    def SGD_logreg(self, epochs, mini_batches):
+        X_train = self.X_train
+        y_train = self.y_train
 
-        train_data = tuple(zip(X_train, y_train))
-        n = len(train_data)
+        n = len(self.X_train)
 
-        beta = np.random.randn(len(X[0]), 1)
+        batch_size = int(n/mini_batches)
 
-        for _ in range(epochs):
-            random.shuffle(train_data)
+        beta = np.random.randn(len(self.X_train[0]), 1)
+        train_data = [self.X_train, self.y_train]
 
-            mini_batches = [train_data[k:k+batch_size] for k in range(0, n, batch_size)]
+        for epoch in range(epochs):
+            for mini_batch in range(mini_batches):
+                index=np.random.randint(mini_batches)
 
-"""
-        for epoch in range(epochs):               # epoch
-            for i in range(n_minibatches):          # minibatches
-                random_index = np.random.randint(n_minibatches)
+                start_calc=index*batch_size
+                end_calc=index*batch_size+batch_size
 
-                p = 1/(1 + np.exp(-xi @ beta))
-                gradient = -xi.T @ (yi - p)
-                l = self.learning_rate(epoch*n_minibatches + i)
-                beta = beta - l * gradient
+                x_temp=self.X_train[start_calc:end_calc]
+                y_temp=self.y_train[start_calc:end_calc]
+
+                eksp=np.dot(x_temp,beta)
+                sg = sigmoid(eksp)
+                temp1=np.transpose(x_temp)
+                grad = -np.dot(temp1,y_temp-sg)
+                l = self.learning_rate(epoch*mini_batches + mini_batch)
+                beta=beta-l*grad
                 self.beta = beta
-
-        self.beta = beta
-"""
+        self.beta=beta
         return beta
 
-    def predict(self, x, beta=None):
-        if beta == None:
-            beta = self.beta
-        pred = np.round(1/(1 + np.exp(-x@beta))).ravel()
-        return pred
+    def predict(self,X):
+        eksp2=np.dot(X,self.beta)
+        #Rounds the elements toward 1 or 0
+        prediction = np.round(sigmoid(eksp2))
+
+        #If I ravel, the accuracy decreases with about 30%. Remember to double check this
+        #prediction=np.ravel(prediction)
+        return prediction
 
     def learning_rate(self, t, t0=5, t1=50):
         return t0/(t+t1)
