@@ -13,8 +13,8 @@ The famous MNIST dataset is a collection of handwritten numbers, as $28\times 28
 This involves randomly dividing the training data into a given number of \textit{mini batches}. For each mini batch, the gradient is found by averaging the gradient value each mini batch sample has. Then the weights and biases are updated (take a step down the "slope") and the process is repeated for the rest of the mini batches. The updating done at each mini batch is expressed mathematically as
 
 \begin{align*}
-    w&\rightarrow w' = w - \frac{\eta}{m}\sum_i^m \nabla C_i \\
-    b&\rightarrow b' = b - \frac{\eta}{m}\sum_i^m \nabla C_i,
+    w&\rightarrow w' = w - \frac{\eta}{m}\sum_i^m \nabla C_{i,w} \\
+    b&\rightarrow b' = b - \frac{\eta}{m}\sum_i^m \nabla C_{i,b},
 \end{align*}
 
 where $m$ is the number of datapoints in the mini batches and $\nabla C_i$ is the gradient at each individual data point. After exhausting all the training data, we have finished a so-called \textit{epoch}, of which we can perform as many as necessary.
