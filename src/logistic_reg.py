@@ -1,6 +1,9 @@
 # Import modules and neededfunctions
 import numpy as np
-from utils import sigmoid
+from utils import sigmoid, accuracy
+
+from sklearn.preprocessing import scale
+
 
 # set random seed for reproducibility
 np.random.seed(2020)
@@ -45,10 +48,79 @@ class LogReg:
         eksp2=np.dot(X,self.beta)
         #Rounds the elements toward 1 or 0
         prediction = np.round(sigmoid(eksp2))
-
-        #If I ravel, the accuracy decreases with about 30%. Remember to double check this
-        #prediction=np.ravel(prediction)
+        #If i ravel it, the accurcay drops about 10%
+        prediction=np.ravel(prediction)
         return prediction
 
     def learning_rate(self, t, t0=5, t1=50):
         return t0/(t+t1)
+
+
+def k_folds(n, k=5):
+    """Imports k_fold function from project 1
+    Returns a list with k lists of indexes to be used for test-sets in
+    cross-validation. The indexes range from 0 to n, and are randomly distributed
+    to the k groups s.t. the groups do not overlap"""
+    indexes = np.arange(n)
+
+    min_size = int(n/k)
+    extra_points = n % k
+
+    folds = []
+    start_index = 0
+    for i in range(k):
+        if extra_points > 0:
+            test_indexes = indexes[start_index: start_index + min_size + 1]
+            extra_points -= 1
+            start_index += min_size + 1
+        else:
+            test_indexes = indexes[start_index: start_index + min_size]
+            start_index += min_size
+        folds.append(test_indexes)
+    return folds
+
+
+def CV_log_reg(x, y, k=5,epochs=100,mini_batches=30):
+    """Function that performs k-fold cross-validation with logistic regression
+    on breastcancer data."""
+
+    #Defining empty lists to save the accuracy values
+    test_error = []
+    train_error = []
+
+    # Length of target list
+    n = len(y)
+    #Length of each fold
+    i = int(n/k)
+    #Calling the k_fold function to produce the folds
+    test_folds = k_folds(n, k=k)
+
+    #Looping over the test folds
+    for i in test_folds:
+        m = len(i)
+        y_test = y[i]
+        y_train = y[np.delete(np.arange(n), i)]
+        x_test = x[i]
+        x_train = x[np.delete(np.arange(n), i)]
+
+        # Scaling the data
+        #x_train = scale(x_train)
+        #x_test = scale(x_test)
+
+        #Raveling the y-values
+        #y_train=np.ravel(y_train)
+        #y_test=np.ravel(y_test)
+
+        # Performs logistic regression on both the test and training set
+        log_reg_code = LogReg(x_train, y_train)
+        log_reg_code.SGD_logreg(epochs, mini_batches)
+        pred_test = log_reg_code.predict(x_test)
+        pred_train = log_reg_code.predict(x_train)
+
+        test_error.append(accuracy(y_test, pred_test))
+        train_error.append(accuracy(y_train, pred_train))
+
+    test_accuracy = np.mean(test_error)
+    train_accuracy = np.mean(train_error)
+
+    return test_accuracy, train_accuracy
