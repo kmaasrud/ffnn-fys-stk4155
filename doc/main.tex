@@ -6,8 +6,8 @@
 \usepackage{subfiles}   % Include subfiles
 \usepackage{hyperref}   % Nice referencing with clickable links
 \usepackage{amsmath}    % Math
-\usepackage[bakend=bibtex,style=ieee]{biblatex}   % Citations
-\usepackage{csquotes}   % Honestly no idea what this does...
+\usepackage[style=ieee]{biblatex}   % Citations
+%\usepackage{csquotes}   % Honestly no idea what this does...
 \usepackage{minted}
 \usepackage{comment}
 \usepackage{amssymb}
@@ -20,11 +20,11 @@
 \usepackage{booktabs}
 
 \graphicspath{{img/}{../img/}}
-\bibliography{references.bib}
+\addbibresource{references.bib}
 
 %\setlength{\parindent}{0pt}
 
-\title{Applying Regression and Resampling Techniques to Norwegian Terrain Data with Franke's Function as Test Function}
+\title{Logistic Regression and Feed Forward Neural Network (FFNN) analysis on the MNIST and Franke's Function Dataset}
 \author{Knut Magnus Aasrud \\ Philip Karim Niane \\ Ida Due-Sørensen}
 \date{\today}
 
