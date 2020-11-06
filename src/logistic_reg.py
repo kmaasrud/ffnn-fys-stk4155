@@ -4,7 +4,6 @@ from utils import sigmoid, accuracy
 
 from sklearn.preprocessing import scale
 
-
 # set random seed for reproducibility
 np.random.seed(2020)
 
@@ -14,9 +13,6 @@ class LogReg:
         self.X_train = X_train
 
     def SGD_logreg(self, epochs, mini_batches):
-        X_train = self.X_train
-        y_train = self.y_train
-
         n = len(self.X_train)
 
         batch_size = int(n/mini_batches)
@@ -102,14 +98,6 @@ def CV_log_reg(x, y, k=5,epochs=100,mini_batches=30):
         y_train = y[np.delete(np.arange(n), i)]
         x_test = x[i]
         x_train = x[np.delete(np.arange(n), i)]
-
-        # Scaling the data
-        #x_train = scale(x_train)
-        #x_test = scale(x_test)
-
-        #Raveling the y-values
-        #y_train=np.ravel(y_train)
-        #y_test=np.ravel(y_test)
 
         # Performs logistic regression on both the test and training set
         log_reg_code = LogReg(x_train, y_train)

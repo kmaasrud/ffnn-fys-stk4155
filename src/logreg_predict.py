@@ -1,6 +1,6 @@
 #Import modules
 from sklearn.datasets import load_breast_cancer
-from sklearn.preprocessing import scale
+from sklearn.preprocessing import scale, StandardScaler
 from sklearn.model_selection import  train_test_split
 from sklearn.linear_model import LogisticRegression
 import numpy as np
@@ -29,67 +29,135 @@ print(f"The dataset includes {not_cancer} patients without cancer, which is {np.
 # Setting up the training data and test data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
-# Scaling the data
-X_train_scaled = scale(X_train)
-X_test_scaled = scale(X_test)
-
 #Raveling the y-values
 y_train_ravel=np.ravel(y_train)
 y_test_ravel=np.ravel(y_test)
 
+# Scaling the data using the scikit learn modules
+scaler = StandardScaler();  scaler.fit(X_train)
+X_train_scaled = scaler.transform(X_train)
+X_test_scaled = scaler.transform(X_test)
 
-# Performs logistic regression
-log_reg_code = LogReg(X_train_scaled, y_train)
-log_reg_code.SGD_logreg(epochs=80, mini_batches=20)
-pred = log_reg_code.predict(X_test_scaled)
-accuracy_code = accuracy(y_test_ravel, pred)
+#Function that performs logisitc regression using scikit learn
+def log_reg_scikit_learn(X_train_scaled=X_train_scaled, X_test_scaled=X_test_scaled, y_test_ravel=y_test_ravel, y_train_ravel=y_train_ravel):
+    log_reg_scikit= LogisticRegression(solver='liblinear')
+    y_pred=log_reg_scikit.fit(X_train_scaled, y_train_ravel)
+    accuracy_scikit=format(log_reg_scikit.score(X_test_scaled,y_test_ravel))
 
+    print(f" Accuracy: logistic regression using the scikit: {accuracy_scikit}")
 
-#Performs logisitc regression using scikit learn
-log_reg_scikit= LogisticRegression(solver='liblinear')
-y_pred=log_reg_scikit.fit(X_train_scaled, y_train_ravel)
-#accuracy_scikit=accuracy(y_test,y_pred)
-accuracy_scikit=format(log_reg_scikit.score(X_test_scaled,y_test_ravel))
+    return accuracy_scikit
 
-
-print(f" Accuracy: logistic regression using the code: {accuracy_code}")
-print(f" Accuracy: logistic regression using the scikit: {accuracy_scikit}")
-
-#Getting overflow for some reason, will try to fix tomorrow
-def LogReg_optimize_n_minibatches(epochs = 100, X=X, y=y):
-    print("\nOptimizing number of minibatches for logistic regression...")
-    # Insert column of 1's first
-    one_vector = np.ones((len(y),1))
-    X = np.concatenate((one_vector, X), axis = 1)
-
-    iterations = 10
+#Finding the best number of mini_batches with a set amount og epochs
+def log_reg_best_mini_batch(epochs = 120, X=X, y=y):
+    #Making a figure to plot the functions in
     plt.figure()
-    n_minibatches = np.arange(1,150, 10)
-    for iteration in range(iterations):
-        print(f"iteration {iteration}")
-        acc_scores = np.zeros(len(n_minibatches))
-        acc_train_scores = np.zeros(len(n_minibatches))
-        for i, n in enumerate(n_minibatches):
-            #logreg = LogReg(X_train, y_train)
-            #logreg.sgd(n_epochs=epochs, n_minibatches=n)
-            #pred = logreg.predict(X_test)
-            #acc = accuracy(y_test, pred)
-            acc, train_acc = CV_log_reg(X, y, epochs=epochs, mini_batches=n)
-            acc_scores[i] = acc
-            acc_train_scores[i] = train_acc
-        plt.plot(n_minibatches, acc_scores, 'tab:blue')
-        plt.plot(n_minibatches, acc_train_scores, 'tab:red')
 
-    plt.xlabel("Number of minibatches in SGD")
-    plt.ylabel("Accuracy score")
+    n=10
+    #Defining empty lists
+    accuracy_test=[]
+    accuracy_train=[]
+    mini_batches_amount=[]
+
+    #Iterating over the batches
+    for i in range(n):
+        print(f"{i*10} %")
+
+        #Clearing the lists before calculating a new mini batch
+        accuracy_test.clear()
+        accuracy_train.clear()
+        mini_batches_amount.clear()
+
+        #looping over the mini batches
+        for j in np.arange(1,150, n):
+            #mini_batches_amount.clear()
+            mini_batches_amount.append(j)
+            test_accuracy_temp, train_accuracy_temp = CV_log_reg(X, y, epochs=epochs, mini_batches=j)
+            accuracy_test.append(test_accuracy_temp)
+            accuracy_train.append(train_accuracy_temp)
+
+        #Plotting the accuracy scores for the train and test sets
+        plt.plot(mini_batches_amount, accuracy_test, 'tab:blue')
+        plt.plot(mini_batches_amount, accuracy_train, 'tab:red')
+
+    #Standard ploting commands
+    plt.xlabel("Number of minibatches")
+    plt.ylabel("Accuracy")
     plt.legend(['Test set', 'Train set'])
-    #save_fig("LogRegcancer_accuracy_vs_n_minibatches")
+    #save_fig("LogRegcancer_accuracy_vs_mini_batches")
     plt.show()
 
-    opt_index = np.where(acc_scores == np.nanmax(acc_scores))
-    opt_n_minibatches = n_minibatches[opt_index]
+    #Finding the best parameters
+    best_index=np.where(accuracy_test==np.nanmax(accuracy_test))
+    best_mini_batches=(best_index[0][0])*10+1
 
-    return opt_n_minibatches
+    print(f" Best amount of minibatches to use: {best_mini_batches}")
+
+    return best_mini_batches
+
+#Finding the best number of epochs with a set amount og mini_batches
+def log_reg_best_epochs(mini_batches = 30, X=X, y=y):
+
+    #Making a figure to plot the functions in
+    plt.figure()
+
+    n=10
+    #Defining empty lists
+    accuracy_test=[]
+    accuracy_train=[]
+    epochs_amount=[]
+
+    #Iterating over the batches
+    for i in range(n):
+        print(f"{i*10} %")
+
+        #Clearing the lists before calculating a new mini batch
+        accuracy_test.clear()
+        accuracy_train.clear()
+        epochs_amount.clear()
+
+        #looping over the mini batches
+        for j in np.arange(1,200, n):
+            #epochs_amount.clear()
+            epochs_amount.append(j)
+            test_accuracy_temp, train_accuracy_temp = CV_log_reg(X, y, epochs=j, mini_batches=mini_batches)
+            accuracy_test.append(test_accuracy_temp)
+            accuracy_train.append(train_accuracy_temp)
+
+        #Plotting the accuracy scores for the train and test sets
+        plt.plot(epochs_amount, accuracy_test, 'tab:red')
+        plt.plot(epochs_amount, accuracy_train, 'tab:green')
+
+    #Standard ploting commands
+    plt.xlabel("Number of epochs")
+    plt.ylabel("Accuracy")
+    plt.legend(['Test set', 'Train set'])
+    #save_fig("LogRegcancer_accuracy_vs_mini_batches")
+    plt.show()
+
+    #Finding the best parameters
+    best_index=np.where(accuracy_test==np.nanmax(accuracy_test))
+    best_epochs=(best_index[0][0])*10+1
+
+    print(f" Best amount of minibatches to use: {best_epochs}")
+
+    return best_epochs
+
+#Function that performs logisitc regression using using the code
+def logistic_reg(epochs=71, mini_batches=31, X_train_scaled=X_train_scaled, X_test_scaled=X_test_scaled, y_test=y_test, y_train=y_train):
+    # Performs logistic regression
+    log_reg_code = LogReg(X_train_scaled, y_train)
+    log_reg_code.SGD_logreg(epochs=epochs, mini_batches=mini_batches)
+    pred = log_reg_code.predict(X_test_scaled)
+    accuracy_code = accuracy(y_test, pred)
+
+    print(f" Accuracy: logistic regression using the code: {accuracy_code}")
+
+    return accuracy_code
 
 
-LogReg_optimize_n_minibatches()
+#Calling the functions- Log reg with best parameters is run by running logisitc_reg()
+log_reg_scikit_learn()
+#log_reg_best_mini_batch()
+#log_reg_best_epochs()
+logistic_reg()

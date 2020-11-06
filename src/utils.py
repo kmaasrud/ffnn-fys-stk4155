@@ -30,11 +30,11 @@ def leaky_ReLU(x, derivative=False):
 def leaky_ReLU_derivative(x):
     """ Derivative of the Leaky ReLU function. """
     idx1 = np.where(x < 0)
-    x[idx1] = 0.01 
+    x[idx1] = 0.01
     idx2 = np.where(x > 0)
-    x[idx2] = 1.0 
+    x[idx2] = 1.0
     return x
-    
+
 def MSE(x, y):
     """The mean squared error function.
     The result is divided by 2 to make sure the derivative of the cost function is easily written as just (x - y)"""
@@ -44,5 +44,7 @@ def MSE(x, y):
     return s / (2 * len(x))
 
 def accuracy(y, y_pred):
+    y=np.ravel(y)
+    y_pred=np.ravel(y_pred)
     numerator=np.sum(y == y_pred)
     return numerator/len(y)
