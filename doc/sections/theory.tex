@@ -56,10 +56,6 @@ By reordering the logarithms and taking the negative of \cref{eq:log-likelihood}
     \frac{\partial^2\mathcal{C}(\boldsymbol{\beta})}{\partial\boldsymbol{\beta}\partial\boldsymbol{\beta}^T} &= \boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X},
 \end{align} also known as the Jacobian and Hessian matrices, respectively. We will use the stochastic gradient descent (SGD) (\cref{sec:sgd}) to find the optimal parameter \ensuremath{\boldsymbol{\beta}}. 
 
-\subsection{Datasets}
-We will analyze the following datasets:
-\subsubsection{MNIST}
-The famous MNIST dataset is a collection of handwritten numbers, as $28\times 28$ grayscale images. It comes in two sets, a training set with $60,000$ images, and a testing set with $10,000$ images. In this report, we will model the inputs as a $28\times 28 = 784$-dimensional vector, and the output as a $10$-dimensional state vector, with each dimension representing the corresponding digit.
 
 \subsection{Stochastic Gradient Descent}\label{sec:sgd}
 \textit{Gradient descent} describes the process of finding a local minimum of a function (the cost function, in our case) by following the negative value of the gradient at each point, stepwise. \textit{Stochastic gradient descent} or SDG is a way of increasing the numerical efficiency of this process, by doing this process stochastically.
@@ -72,5 +68,37 @@ This involves randomly dividing the training data into a given number of \textit
 \end{align*}
 
 where $m$ is the number of datapoints in the mini batches and $\nabla C_i$ is the gradient at each individual data point. After exhausting all the training data, we have finished a so-called \textit{epoch}, of which we can perform as many as necessary.
+
+\subsection{Error metrics/Quality of models}
+We measure the performance of the different models used in this work. For classification, we measure how accurate the predictions given by the model are by the so called accuracy score. The accuracy score is given by
+
+\begin{align}
+    \text{accuracy}=\frac{1}{n}\sum_{i=0}^nI(t_i=y_i),
+    \label{eq:accuracy-score}
+\end{align} where $n$ is the number of samples, $t_i$ represents the target output and $I$ is the indicator function, which returns 1 if \ensuremath{y_i=t_i} and 0 otherwise. 
+
+%For regression, MSE and R2 score, refer reader to project1
+
+
+\subsection{Franke's function}
+Franke’s function is a function which is often used to test different regression and interpolation methods. The function has two Gaussian peaks of differing heights, and a smaller dip \cite{FrankeRichard1979}. Therefore the dataset is perfect for studying how a neural network can be used to predict the well known function. It's expression is
+
+\begin{align}
+\begin{split}
+  f(x,y) &= \frac{3}{4}\exp{\left(-\frac{(9x-2)^2}{4} - \frac{(9y-2)^2}{4}\right)}+\frac{3}{4}\exp{\left(-\frac{(9x+1)^2}{49}- \frac{(9y+1)}{10}\right)} \\
+  &+\frac{1}{2}\exp{\left(-\frac{(9x-7)^2}{4} - \frac{(9y-3)^2}{4}\right)} -\frac{1}{5}\exp{\left(-(9x-4)^2 - (9y-7)^2\right) }.
+\end{split}
+  \label{eq:franke-func}
+\end{align}
+
+In the defined interval $x,y\in[0,1]$. For more information about Franke's function see \cite{project2}. An illustration of Franke's function can be seen in figure \ref{fig:frankesplot}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[trim=2.4cm 1cm 1.4cm 1cm, clip,width = 3in]{../assets/actual_franke_plot.png}
+  \caption{Shape of Franke's function which will be used as a interpolating goal}
+  \label{fig:frankesplot}
+\end{figure}
+
 
 \end{document}
