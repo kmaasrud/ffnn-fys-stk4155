@@ -49,7 +49,7 @@ def log_reg_scikit_learn(X_train_scaled=X_train_scaled, X_test_scaled=X_test_sca
     return accuracy_scikit
 
 #Finding the best number of mini_batches with a set amount og epochs
-def log_reg_best_mini_batch(epochs = 120, X=X, y=y):
+def log_reg_best_mini_batch(epochs = 110, X=X, y=y):
     #Making a figure to plot the functions in
     plt.figure()
 
@@ -77,8 +77,8 @@ def log_reg_best_mini_batch(epochs = 120, X=X, y=y):
             accuracy_train.append(train_accuracy_temp)
 
         #Plotting the accuracy scores for the train and test sets
-        plt.plot(mini_batches_amount, accuracy_test, 'tab:blue')
-        plt.plot(mini_batches_amount, accuracy_train, 'tab:red')
+        plt.plot(mini_batches_amount, accuracy_test, 'tab:red')
+        plt.plot(mini_batches_amount, accuracy_train, 'tab:green')
 
     #Standard ploting commands
     plt.xlabel("Number of minibatches")
@@ -96,7 +96,7 @@ def log_reg_best_mini_batch(epochs = 120, X=X, y=y):
     return best_mini_batches
 
 #Finding the best number of epochs with a set amount og mini_batches
-def log_reg_best_epochs(mini_batches = 30, X=X, y=y):
+def log_reg_best_epochs(mini_batches = 40, X=X, y=y):
 
     #Making a figure to plot the functions in
     plt.figure()
@@ -144,7 +144,7 @@ def log_reg_best_epochs(mini_batches = 30, X=X, y=y):
     return best_epochs
 
 #Function that performs logisitc regression using using the code
-def logistic_reg(epochs=71, mini_batches=31, X_train_scaled=X_train_scaled, X_test_scaled=X_test_scaled, y_test=y_test, y_train=y_train):
+def logistic_reg(epochs=110, mini_batches=31, X_train_scaled=X_train_scaled, X_test_scaled=X_test_scaled, y_test=y_test, y_train=y_train):
     # Performs logistic regression
     log_reg_code = LogReg(X_train_scaled, y_train)
     log_reg_code.SGD_logreg(epochs=epochs, mini_batches=mini_batches)
@@ -155,9 +155,46 @@ def logistic_reg(epochs=71, mini_batches=31, X_train_scaled=X_train_scaled, X_te
 
     return accuracy_code
 
+#Finding the best number of mini_batches and epochs without the L2 parametrization.
+#The chosen epochs and minibatches i only optimal for this specific case
+def log_reg_best_mini_batch_epoch(X_train_scaled=X_train_scaled, X_test_scaled=X_test_scaled, y_test=y_test, y_train=y_train):
+    #Defining empty lists
+    accuracy_list=[]
+    mini_batch_list=[]
+    epochs_list=[]
+
+    #Iterating over the batches
+    for e in range(40,201, 1):
+        print(f"{(e-40)/1.6} %")
+        #looping over the mini batches
+        for mini in range(1,151, 1):
+            #mini_batches_amount.clear()
+
+            log_reg_code = LogReg(X_train_scaled, y_train)
+            log_reg_code.SGD_logreg(epochs=e, mini_batches=mini)
+            pred = log_reg_code.predict(X_test_scaled)
+            accuracy_list.append(accuracy(y_test, pred))
+            mini_batch_list.append(mini)
+            epochs_list.append(e)
+
+    max_accuracy = max(accuracy_list)
+    max_index = accuracy_list.index(max_accuracy)
+    best_mini_batch=mini_batch_list[max_index]
+    best_epoch=epochs_list[max_index]
+
+
+    print(f" Best amount of minibatches to use: {best_mini_batch}")
+    print(f" Best amount of epochs to use: {best_epoch}")
+
+    print(max_accuracy)
+    return
+
 
 #Calling the functions- Log reg with best parameters is run by running logisitc_reg()
 log_reg_scikit_learn()
-#log_reg_best_mini_batch()
+log_reg_best_mini_batch()
 #log_reg_best_epochs()
 logistic_reg()
+
+#Best parameters in this specific case
+#log_reg_best_mini_batch_epoch()

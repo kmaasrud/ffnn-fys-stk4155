@@ -1,8 +1,11 @@
 # Import modules and neededfunctions
 import numpy as np
 from utils import sigmoid, accuracy
+from scipy.special import expit
+
 
 from sklearn.preprocessing import scale
+
 
 # set random seed for reproducibility
 np.random.seed(2020)
