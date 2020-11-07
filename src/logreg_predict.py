@@ -5,6 +5,7 @@ from sklearn.model_selection import  train_test_split
 from sklearn.linear_model import LogisticRegression
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
 #Import logistic regression class and needed functions
 from logistic_reg import *
@@ -40,13 +41,19 @@ X_test_scaled = scaler.transform(X_test)
 
 #Function that performs logisitc regression using scikit learn
 def log_reg_scikit_learn(X_train_scaled=X_train_scaled, X_test_scaled=X_test_scaled, y_test_ravel=y_test_ravel, y_train_ravel=y_train_ravel):
+    start = time.time()
     log_reg_scikit= LogisticRegression(solver='liblinear')
     y_pred=log_reg_scikit.fit(X_train_scaled, y_train_ravel)
     accuracy_scikit=format(log_reg_scikit.score(X_test_scaled,y_test_ravel))
 
     print(f" Accuracy: logistic regression using the scikit: {accuracy_scikit}")
 
+    end = time.time()
+
+    print(f" The scikit function used {end-start} seconds to run")
+
     return accuracy_scikit
+
 
 #Finding the best number of mini_batches with a set amount og epochs
 def log_reg_best_mini_batch(epochs = 110, X=X, y=y):
@@ -144,7 +151,8 @@ def log_reg_best_epochs(mini_batches = 40, X=X, y=y):
     return best_epochs
 
 #Function that performs logisitc regression using using the code
-def logistic_reg(epochs=110, mini_batches=31, X_train_scaled=X_train_scaled, X_test_scaled=X_test_scaled, y_test=y_test, y_train=y_train):
+def logistic_reg(epochs=140, mini_batches=35, X_train_scaled=X_train_scaled, X_test_scaled=X_test_scaled, y_test=y_test, y_train=y_train):
+    start = time.time()
     # Performs logistic regression
     log_reg_code = LogReg(X_train_scaled, y_train)
     log_reg_code.SGD_logreg(epochs=epochs, mini_batches=mini_batches)
@@ -153,7 +161,11 @@ def logistic_reg(epochs=110, mini_batches=31, X_train_scaled=X_train_scaled, X_t
 
     print(f" Accuracy: logistic regression using the code: {accuracy_code}")
 
+    end = time.time()
+
+    print(f" The self writtten function used {end-start} seconds to run")
     return accuracy_code
+
 
 #Finding the best number of mini_batches and epochs without the L2 parametrization.
 #The chosen epochs and minibatches i only optimal for this specific case
@@ -192,7 +204,7 @@ def log_reg_best_mini_batch_epoch(X_train_scaled=X_train_scaled, X_test_scaled=X
 
 #Calling the functions- Log reg with best parameters is run by running logisitc_reg()
 log_reg_scikit_learn()
-log_reg_best_mini_batch()
+#log_reg_best_mini_batch()
 #log_reg_best_epochs()
 logistic_reg()
 
