@@ -31,7 +31,7 @@ class FFNN:
             The default is 100.
         eta : float
             Learning rate. The default is 0.1.
-        activation : function
+        activation_function : function
             Activation function. The default is utils.sigmoid.
         """
         
@@ -66,7 +66,8 @@ class FFNN:
         if include_weighted_inputs: weighted_inputs = []
         for b, w in zip(self.biases,self.weights):
             weighted_input = np.dot(w, X) + b
-            activations.append(self.activation_function(weighted_input))
+            X = self.activation_function(weighted_input)
+            activations.append(X)
             if include_weighted_inputs: weighted_inputs.append(weighted_input) 
             
         if include_weighted_inputs:
@@ -74,14 +75,10 @@ class FFNN:
         return activations
 
 
-    def SGD(self, X_train, y_train):
-        """" Function that trains the neural network using mini-batch stochastic gradient descencent. 
+    def SGD_train(self, X_train, y_train):
+        """ Function that trains the neural network using mini-batch stochastic gradient descencent."""
         
-        TODO:
-            Add test_data as optional argument and evaluate the network against 
-            the test data after each epoch if test data provided."""
-        
-        train_data = tuple(zip(X_train, y_train))
+        train_data = list(zip(X_train, y_train))
         
         n = len(train_data)
         
@@ -97,11 +94,11 @@ class FFNN:
                 
                 for X, y in mini_batch:
                     nabla_b, nabla_w = self.backpropagate(X, y)
-                    sum_nabla_b = [snb+nb for snb, nb in zip(sum_nabla_b, nabla_b)]
-                    sum_nabla_w = [snw+nw for snw, nw in zip(sum_nabla_w, nabla_w)]
+                    sum_nabla_b = [snb + nb for snb, nb in zip(sum_nabla_b, nabla_b)]
+                    sum_nabla_w = [snw + nw for snw, nw in zip(sum_nabla_w, nabla_w)]
 
-                self.weights = [w - (self.eta/len(mini_batch)) * snw for w, snw in zip(self.weights, sum_nabla_w)]
-                self.biases = [b - (self.eta/len(mini_batch)) * snb for b, snb in zip(self.biases, sum_nabla_b)]
+                self.weights = [w - self.eta/len(mini_batch) * snw for w, snw in zip(self.weights, sum_nabla_w)]
+                self.biases = [b - self.eta/len(mini_batch) * snb for b, snb in zip(self.biases, sum_nabla_b)]
         
     
     def backpropagate(self, X, y):
