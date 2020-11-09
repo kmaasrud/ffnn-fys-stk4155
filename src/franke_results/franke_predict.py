@@ -19,15 +19,14 @@ x = np.linspace(0, 1, N); y = np.linspace(0, 1, N)
 x, y = np.meshgrid(x, y)
 x = np.ravel(x); y = np.ravel(y)
 X = design_matrix(x, y, deg)
-print(X.shape)
 Y = franke(x, y, noise_sigma=0.1, noise=True)
-print(Y.shape)
 X_train, X_test, y_train, y_test = split_and_scale(X, Y, test_size=0.3)
 
-nn = FFNN([X.shape[1], 100, 10, 1])
-nn.SGD_train(X_train, y_train)
+nn = FFNN([X.shape[1], 100, 10, 1], epochs=1)
+nn.SGD_train(list(zip(X_train, y_train)))
 
 nn_predict = nn.predict(X_test)
+print(nn_predict)
 
 fig = plt.figure()
 ax = fig.gca(projection='3d')

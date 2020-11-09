@@ -37,6 +37,14 @@ def leaky_ReLU_derivative(x):
     x[idx2] = 1.0
     return x
 
+
+def quadratic_cost_function(x, y, derivative=False):
+    """Quadratic cost function, divided in half to provide a simple derivative, which can optionally be returned."""
+    if derivative:
+        return x - y
+    return 0.5 * (x - y)**2
+
+
 def MSE(x, y):
     """The mean squared error function.
     The result is divided by 2 to make sure the derivative of the cost function is easily written as just (x - y)"""
