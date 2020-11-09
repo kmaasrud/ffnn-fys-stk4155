@@ -6,13 +6,15 @@ import random
 import numpy as np
 from numba import jit
 
-from utils import sigmoid, sigmoid_derivative, MSE, quadratic_cost_function
+from utils import sigmoid, sigmoid_derivative, MSE, quadratic_cost_function, lookahead
 
 np.random.seed(2020) # set random seed for reproducibility 
 
 
 class FFNN:
-    def __init__(self, layers, epochs=10, batch_size=100, eta=0.1, activation_function=sigmoid, cost_function=quadratic_cost_function):
+    def __init__(self, layers,
+                epochs=10, batch_size=100, eta=0.1,
+                activation_function=sigmoid, cost_function=quadratic_cost_function, last_layer_activation_function=None):
         """Initialize the feedforward neural network. 
 
         Arguments
@@ -46,6 +48,7 @@ class FFNN:
         self.eta = eta
         self.activation_function = np.vectorize(activation_function)
         self.cost_function = cost_function
+        self.last_layer_activation_function = last_layer_activation_function if last_layer_activation_function else activation_function
               
         # Initialize weights and biases with random values. Each weight-bias pair corresponds to a connection between
         # a layer and the neurons in the next layer.
@@ -60,32 +63,35 @@ class FFNN:
     
     def predict(self, Xs):
         """Function that returns the output of the network, given inputs X."""
-        y = []
+        ys = []
         for i, X in enumerate(Xs):
             # Pretty progress indicator
             print(f"\033[A\nPredicting new data: {round((i+1)/len(Xs)*100,1)}%", end="")
-            tmp = self.feed_forward(X)[-1]
+            y = self.feed_forward(X)[-1]
 
             # Single values also get stored in a list, which we don't want. This is an ugly workaround, but it works
-            if len(tmp) == 1: tmp = tmp[0]
+            if len(y) == 1: y = y[0]
 
-            y.append(tmp)
+            ys.append(y)
 
         # Indicate done
         print(" \033[32m✔ DONE\033[0m")
-        return np.array(y).T
+        return np.array(ys).T
     
 
     def feed_forward(self, X, include_weighted_inputs=False):
         """Function that feeds forward the input X and stores all the layers' activations in a list it returns.
         Optionally, it can also return the weighted inputs, which are useful in the backpropagation algorithm."""        
         activations = [X]
-        if include_weighted_inputs: weighted_inputs = []
-        for b, w in zip(self.biases,self.weights):
+        weighted_inputs = []
+
+        for bw_tuple, has_more in lookahead(zip(self.biases ,self.weights)):
+            f = self.activation_function if has_more else self.last_layer_activation_function
+            b, w = bw_tuple
             weighted_input = w @ X + b
-            X = self.activation_function(weighted_input)
+            X = f(weighted_input)
             activations.append(X)
-            if include_weighted_inputs: weighted_inputs.append(weighted_input) 
+            weighted_inputs.append(weighted_input) 
             
         if include_weighted_inputs: return activations, weighted_inputs 
         return activations
@@ -135,12 +141,12 @@ class FFNN:
         
         # INFO1: * is the Hadamard product in numpy, doing element-wise multiplication. Beware that this is only supported by
         # Python 3.5 and above. Else, numpy.multiply might have to be used instead.
-        delta = self.cost_function(activations[-1], y, derivative=True) * self.activation_function(weighted_inputs[-1], derivative=True)
+        delta = self.cost_function(activations[-1], y, derivative=True) * self.last_layer_activation_function(weighted_inputs[-1], derivative=True)
         nabla_b[-1] = delta
         nabla_w[-1] = np.outer(delta, activations[-2].T)
          
         for l in range(2, self.n_layers):
-            cost_derivative = np.dot(self.weights[-l+1].transpose(), delta) 
+            cost_derivative = self.weights[-l+1].T @ delta 
             # See INFO1 above.
             delta = cost_derivative * self.activation_function(weighted_inputs[-l], derivative=True)
             nabla_b[-l] = delta

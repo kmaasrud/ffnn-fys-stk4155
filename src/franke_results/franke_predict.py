@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pickle
 
 import sys, os, inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -12,9 +13,8 @@ from ffnn import FFNN
 
 out_dir = "../../doc/assets/"
 
-N = 500
-deg = 12
-lmb = 2
+N = 50
+deg = 8
 x = np.linspace(0, 1, N); y = np.linspace(0, 1, N)
 x, y = np.meshgrid(x, y)
 x = np.ravel(x); y = np.ravel(y)
@@ -22,8 +22,19 @@ X = design_matrix(x, y, deg)
 Y = franke(x, y, noise_sigma=0.1, noise=True)
 X_train, X_test, y_train, y_test = split_and_scale(X, Y, test_size=0.3)
 
-nn = FFNN([X.shape[1], 100, 10, 1], epochs=3)
-nn.SGD_train(list(zip(X_train, y_train)))
+load_pickle = input("Load pickled network (y/n)? ") == "y"
+if load_pickle:
+    with open("network.pickle", "rb") as f:
+        nn = pickle.load(f)
+else:
+    do_pickle = input("Pickle the neural network (y/n)? ") == "y"
+    nn = FFNN([X.shape[1], 60, 10, 1], epochs=5)
+    nn.SGD_train(list(zip(X_train, y_train)))
+
+    if do_pickle:
+        with open("network.pickle", "wb") as f:
+            pickle.dump(nn, f)
+
 
 nn_predict = nn.predict(X_test)
 print(nn_predict)
