@@ -7,7 +7,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
 from franke import franke
-from utils import design_matrix, split_and_scale
+from utils import design_matrix, split_and_scale, ReLU
 from ffnn import FFNN
 
 out_dir = "../../doc/assets/"
@@ -22,7 +22,7 @@ X = design_matrix(x, y, deg)
 Y = franke(x, y, noise_sigma=0.1, noise=True)
 X_train, X_test, y_train, y_test = split_and_scale(X, Y, test_size=0.3)
 
-nn = FFNN([X.shape[1], 100, 10, 1], epochs=1)
+nn = FFNN([X.shape[1], 100, 10, 1], epochs=3)
 nn.SGD_train(list(zip(X_train, y_train)))
 
 nn_predict = nn.predict(X_test)

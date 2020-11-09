@@ -44,7 +44,7 @@ class FFNN:
         self.epochs = epochs
         self.batch_size = batch_size
         self.eta = eta
-        self.activation_function = activation_function
+        self.activation_function = np.vectorize(activation_function)
         self.cost_function = cost_function
               
         # Initialize weights and biases with random values. Each weight-bias pair corresponds to a connection between
@@ -61,13 +61,18 @@ class FFNN:
     def predict(self, Xs):
         """Function that returns the output of the network, given inputs X."""
         y = []
-        for X in Xs:
+        for i, X in enumerate(Xs):
+            # Pretty progress indicator
+            print(f"\033[A\nPredicting new data: {round((i+1)/len(Xs)*100,1)}%", end="")
             tmp = self.feed_forward(X)[-1]
 
-            # Single values get stored in a list, which I don't want. This is an ugly workaround
+            # Single values also get stored in a list, which we don't want. This is an ugly workaround, but it works
             if len(tmp) == 1: tmp = tmp[0]
 
             y.append(tmp)
+
+        # Indicate done
+        print(" \033[32m✔ DONE\033[0m")
         return np.array(y).T
     
 
