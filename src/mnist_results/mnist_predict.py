@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
-from keras.datasets import mnist
 
 import sys, os, inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
