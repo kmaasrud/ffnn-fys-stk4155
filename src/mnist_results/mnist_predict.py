@@ -25,7 +25,7 @@ else:
     layer_structure = [X_train.shape[1], 100, y_train.shape[1]]
     training_data = list(zip(X_train, y_train))
 
-    nn_sigmoid = FFNN(layer_structure, epochs=5)
+    nn_sigmoid = FFNN(layer_structure, epochs=20)
     nn_sigmoid.SGD_train(training_data)
 
     if do_pickle:
