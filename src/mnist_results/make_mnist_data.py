@@ -23,3 +23,6 @@ with open("mnist_array_output.pickle", "wb") as f:
     
 with open("mnist_scalar_output.pickle", "wb") as f:
     pickle.dump((X_train, X_test, y_train_unshaped, y_test_unshaped), f)
+    
+with open("mnist_X_test_unraveled.pickle", "wb") as f:
+    pickle.dump(X_test_unraveled, f)
