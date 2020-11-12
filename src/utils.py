@@ -16,26 +16,24 @@ def sigmoid_derivative(x):
 
 def ReLU(x, derivative=False):
     if derivative:
-        return heaviside(x)
+        return np.heaviside(x, 1)
+        
+    if type(x) == np.ndarray:
+        x[x<0] = 0
+        return x
     return x if x > 0 else 0
-
-def heaviside(x):
-    return 1 if x >= 0 else 0
 
 def leaky_ReLU(x, derivative=False):
     """ The Leaky ReLUfunction. """
     if derivative:
         return leaky_ReLU_derivative(x)
-    idx = np.where(x <= 0)
-    x[idx] = 0.01 * x
+    x[x<=0] = 0.01 * x[x<=0]
     return x
 
 def leaky_ReLU_derivative(x):
     """ Derivative of the Leaky ReLU function. """
-    idx1 = np.where(x < 0)
-    x[idx1] = 0.01
-    idx2 = np.where(x > 0)
-    x[idx2] = 1.0
+    x[x<0] = 0.01
+    x[x>0] = 1.0
     return x
 
 

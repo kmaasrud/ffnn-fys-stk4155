@@ -117,7 +117,7 @@ class FFNN:
 
             for i, mini_batch in enumerate(mini_batches):
                 # Pretty progress indicator
-                print(f"\033[A\nTraining epoch {epoch+1} of {self.epochs}: {round((i+1)/len(mini_batches)*100,1)}%", end="")
+                print(f"\033[A\nTraining epoch {epoch+1} of {self.epochs}: {round((i+1)/len(mini_batches)*100,1)}%\t(Activation function: {self.activation_function.__name__})", end="")
 
                 sum_nabla_b = [np.zeros(b.shape) for b in self.biases]
                 sum_nabla_w = [np.zeros(w.shape) for w in self.weights]
