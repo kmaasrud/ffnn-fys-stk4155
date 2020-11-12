@@ -137,3 +137,8 @@ dmypy.json
 *.bcf
 *.fdb_latexmk
 *.fls
+
+# Specific files
+
+mnist_array_output.pickle
+mnist_scalar_output.pickle
