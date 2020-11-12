@@ -13,7 +13,7 @@ from ffnn import FFNN
 
 out_dir = "../../doc/assets/"
 
-N = 50
+N = 100
 deg = 8
 x = np.linspace(0, 1, N); y = np.linspace(0, 1, N)
 x, y = np.meshgrid(x, y)
@@ -28,7 +28,7 @@ if load_pickle:
         nn = pickle.load(f)
 else:
     do_pickle = input("Pickle the neural network (y/n)? ") == "y"
-    nn = FFNN([X.shape[1], 60, 10, 1], epochs=5)
+    nn = FFNN([X.shape[1], 50, 1], epochs=20)
     nn.SGD_train(list(zip(X_train, y_train)))
 
     if do_pickle:

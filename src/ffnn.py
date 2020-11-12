@@ -38,6 +38,8 @@ class FFNN:
             Activation function. The default is utils.sigmoid.
         cost_function : function
             The cost function of the network. The default is utils.quadratic_cost_function.
+        last_layer_activation_function : function
+            Optional differing activation function for the last layer. The default is the same as activation_function.
         """
         
         # variables
@@ -46,7 +48,7 @@ class FFNN:
         self.epochs = epochs
         self.batch_size = batch_size
         self.eta = eta
-        self.activation_function = np.vectorize(activation_function)
+        self.activation_function = activation_function
         self.cost_function = cost_function
         self.last_layer_activation_function = last_layer_activation_function if last_layer_activation_function else activation_function
               
@@ -117,8 +119,8 @@ class FFNN:
                 # Pretty progress indicator
                 print(f"\033[A\nTraining epoch {epoch+1} of {self.epochs}: {round((i+1)/len(mini_batches)*100,1)}%", end="")
 
-                sum_nabla_b = [np.empty(b.shape) for b in self.biases]
-                sum_nabla_w = [np.empty(w.shape) for w in self.weights]
+                sum_nabla_b = [np.zeros(b.shape) for b in self.biases]
+                sum_nabla_w = [np.zeros(w.shape) for w in self.weights]
                 
                 for X, y in mini_batch:
                     nabla_b, nabla_w = self.backpropagate(X, y)
@@ -134,8 +136,8 @@ class FFNN:
     
     def backpropagate(self, X, y):
         """Considers the single input-output pair X and y, and returns the gradient using the backpropagation algorithm."""
-        nabla_b = [np.empty(b.shape) for b in self.biases]
-        nabla_w = [np.empty(w.shape) for w in self.weights]
+        nabla_b = [np.zeros(b.shape) for b in self.biases]
+        nabla_w = [np.zeros(w.shape) for w in self.weights]
         
         activations, weighted_inputs = self.feed_forward(X, include_weighted_inputs=True)
         
