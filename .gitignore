@@ -142,3 +142,4 @@ dmypy.json
 
 mnist_array_output.pickle
 mnist_scalar_output.pickle
+mnist_X_test_unraveled.pickle
