@@ -12,7 +12,7 @@ from ffnn import FFNN
 from utils import split_and_scale, ReLU, leaky_ReLU
 
 out_dir = "../../doc/assets/"
-pickle_file = "network_relu.pickle"
+pickle_file = "network.pickle"
 
 with open("mnist_array_output.pickle", "rb") as f:
     X_train, X_test, y_train, y_test = pickle.load(f)
@@ -50,5 +50,6 @@ if do_plot:
         plt.subplot(330 + 1 + i)
         plt.imshow(X_test_imgs[j+i], cmap=plt.get_cmap('gray'))
         plt.title(y_predict_relu[j+i])
+        plt.xticks([]); plt.yticks([])
 
-    plt.savefig(os.path.join(out_dir, "nn_sigmoid_relu_plot.png"))
+    plt.savefig(os.path.join(out_dir, "nn_sigmoid_mnist_plot.png"))
