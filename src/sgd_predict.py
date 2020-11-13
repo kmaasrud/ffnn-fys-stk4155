@@ -51,11 +51,11 @@ print('SkLearn Mean Squared Error :',mean_squared_error(y_test, clf_.predict(x_t
 sklearn_w=clf_.coef_
 
 # implemented SGD Classifier
-def SGD(train_data,learning_rate=0.001,n_itr=1000,k=10):
+def SGD(train_data,eta=0.001,n_epochs=1000,k=10):
     w_cur=np.zeros(shape=(1,train_data.shape[1]-1))
     b_cur=0
     cur_itr=1
-    while(cur_itr<=n_itr):
+    while(cur_itr<=n_epochs):
         w_old=w_cur
         b_old=b_cur
         w_temp=np.zeros(shape=(1,train_data.shape[1]-1))
@@ -67,12 +67,13 @@ def SGD(train_data,learning_rate=0.001,n_itr=1000,k=10):
         for i in range(k):
             w_temp+=x[i]*(y[i]-(np.dot(w_old,x[i])+b_old))*(-2/k)
             b_temp+=(y[i]-(np.dot(w_old,x[i])+b_old))*(-2/k)
-        w_cur=w_old-learning_rate*w_temp
-        b_cur=b_old-learning_rate*b_temp
+        w_cur=w_old-eta*w_temp
+        b_cur=b_old-eta*b_temp
         if(w_old==w_cur).all():
             break
         cur_itr+=1
     return w_cur,b_cur
+
 def predict(x,w,b):
     y_pred=[]
     for i in range(len(x)):
@@ -81,7 +82,7 @@ def predict(x,w,b):
     return np.array(y_pred)
        
         
-# Funtion to get optimal learning rate on the implemented SGD Classifier
+# Function to get optimal learning rate on the implemented SGD Classifier
 x1_train,x1_test,y1_train,y1_test=train_test_split(X,Y,test_size=0.3)
 x1_train,x1_cv,y1_train_,y1_cv_=train_test_split(x1_train,y1_train,test_size=0.3)
 
@@ -104,11 +105,11 @@ def tune_etas():
     cv_error=[]
     
     for eta in etas:
-        w,b=SGD(x1_train_data,learning_rate=eta,n_itr=1000)
+        w,b=SGD(x1_train_data,eta=eta,n_epochs=1000)
 
         y1_pred_train=predict(x1_train_,w,b)
         train_error.append(mean_squared_error(y1_train_,y1_pred_train))
-        w,b=SGD(x1_cv_data,learning_rate=eta,n_itr=1000)
+        w,b=SGD(x1_cv_data,eta=eta,n_epochs=1000)
         y1_pred_cv=predict(x1_cv,w,b)
         cv_error.append(mean_squared_error(y1_cv_,y1_pred_cv))
     return train_error,cv_error 
@@ -128,7 +129,7 @@ plt.savefig('etas_vs_mse.png', dpi=300, bbox_inches='tight')
 plt.show()
 
 # running implemented SGD Classifier with obtained optimal learning rate
-w,b=SGD(train_data,learning_rate=0.001,n_itr=1000)
+w,b=SGD(train_data,eta=0.1,n_epochs=1000)
 y_pred=predict(x_test,w,b)
 
 # Errors in implemeted model
@@ -151,3 +152,33 @@ x.field_names=['SKLearn SGD predicted value','Implemented SGD predicted value']
 for itr in range(15):
     x.add_row([sklearn_pred[itr],implemented_pred[itr]])
 print(x) 
+
+n_epochs = np.arange(2, 2001, 200) 
+def tune_epochs():
+    train_error=[]
+    cv_error=[]
+    
+    for n in n_epochs:
+        w,b=SGD(x1_train_data,eta=0.1,n_epochs=n)
+
+        y1_pred_train=predict(x1_train_,w,b)
+        train_error.append(mean_squared_error(y1_train_,y1_pred_train))
+        w,b=SGD(x1_cv_data,eta=0.1,n_epochs=n)
+        y1_pred_cv=predict(x1_cv,w,b)
+        cv_error.append(mean_squared_error(y1_cv_,y1_pred_cv))
+    return train_error,cv_error 
+
+train_error,cv_error=tune_epochs()
+
+# plotting obtained values
+plt.plot(n_epochs,train_error,label='train MSE')
+plt.plot(n_epochs,cv_error,label='CV MSE')
+plt.scatter(n_epochs,train_error)
+plt.scatter(n_epochs,cv_error)
+plt.legend()
+plt.xlabel('number of epochs')
+plt.ylabel('Mean Squared Error')
+plt.tight_layout()
+plt.savefig('epochs_vs_mse.png', dpi=300, bbox_inches='tight')
+plt.show()
+
