@@ -22,7 +22,7 @@ if load_pickle:
         nn_sigmoid = pickle.load(f)
 else:
     do_pickle = input("Pickle the neural networks (y/n)? ") == "y"
-    layer_structure = [X_train.shape[1], 200, 50, y_train.shape[1]]
+    layer_structure = [X_train.shape[1], 200, 50, y_train.shape[0]]
     training_data = list(zip(X_train, y_train))
 
     nn_sigmoid = FFNN(layer_structure, epochs=20)
