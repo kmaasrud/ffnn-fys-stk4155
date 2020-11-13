@@ -99,7 +99,7 @@ class FFNN:
         return activations
 
 
-    def SGD_train(self, train_data):
+    def SGD_train(self, train_data, report_convergence=False):
         """Function that trains the neural network using mini-batch stochastic gradient descencent.
         
         Arguments
@@ -109,6 +109,7 @@ class FFNN:
         
         n = len(train_data)
         
+        batch_MSEs = []
         # Quadruple for loop!!! There's probably some possible numba-improvements here, but that'll have to wait
         for epoch in range(self.epochs):
             random.shuffle(train_data)
@@ -122,19 +123,29 @@ class FFNN:
                 sum_nabla_b = [np.zeros(b.shape) for b in self.biases]
                 sum_nabla_w = [np.zeros(w.shape) for w in self.weights]
                 
+                MSEs = []
                 for X, y in mini_batch:
-                    nabla_b, nabla_w = self.backpropagate(X, y)
+                    if report_convergence:
+                        nabla_b, nabla_w, mse = self.backpropagate(X, y, report_convergence=True)
+                        MSEs.append(mse)
+                    else:
+                        nabla_b, nabla_w = self.backpropagate(X, y)
                     sum_nabla_b = [snb + nb for snb, nb in zip(sum_nabla_b, nabla_b)]
                     sum_nabla_w = [snw + nw for snw, nw in zip(sum_nabla_w, nabla_w)]
 
                 self.weights = [w - self.eta/len(mini_batch) * snw for w, snw in zip(self.weights, sum_nabla_w)]
                 self.biases = [b - self.eta/len(mini_batch) * snb for b, snb in zip(self.biases, sum_nabla_b)]
+                if report_convergence:
+                    batch_MSEs.append(sum(MSEs)/len(MSEs))
                 
             # Indicate done and begin next epoch
             print(" \033[32m✔ DONE\033[0m")
+                
+        if report_convergence:
+            return MSEs
         
     
-    def backpropagate(self, X, y):
+    def backpropagate(self, X, y, report_convergence=False):
         """Considers the single input-output pair X and y, and returns the gradient using the backpropagation algorithm."""
         nabla_b = [np.zeros(b.shape) for b in self.biases]
         nabla_w = [np.zeros(w.shape) for w in self.weights]
@@ -154,4 +165,6 @@ class FFNN:
             nabla_b[-l] = delta
             nabla_w[-l] = np.outer(delta, activations[-l-1].T)
             
+        if report_convergence:
+            return nabla_b, nabla_w, sum((activations[-1] - y)**2)
         return nabla_b, nabla_w
