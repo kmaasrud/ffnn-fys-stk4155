@@ -56,4 +56,36 @@ Testing different amount of epochs was also done and timed to see how the increa
 \subsubsection{Neural network for classification}
 
 \subsection{Regression}
+\subsubsection{Neural network for regression}
+The franke function was used as regression goal.. continue on this after lunch.
+
+Insert the actual frankeplot here, and make sure the result pictures are correct.
+
+
+\begin{figure}[htb!]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[trim=2.4cm 1cm 1.4cm 1cm, clip,width=1.1\textwidth]{../assets/nn_sigmoid_franke_plot.png}
+        \caption{Sigmoid}
+        \label{fig:result_ols_plot}
+    \end{subfigure}
+    \quad
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[trim=2.4cm 1cm 1.4cm 1cm, clip,width=1.1\textwidth]{../assets/nn_sigmoid_franke_plot.png}
+        \caption{RELU}
+    \end{subfigure}
+    
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[trim=2.4cm 1cm 1.4cm 1cm, clip,width=1.1\textwidth]{../assets/nn_sigmoid_franke_plot.png}
+        \caption{Leaky franke}
+    \end{subfigure}
+    \caption{Prediction of the data shown in figure \ref{fig:result_actual_plot} implementing different activation functions in the neural network}
+    \label{fig:result_franke_plots}
+\end{figure}
+
+
+
 \end{document}
