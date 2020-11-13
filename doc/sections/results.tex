@@ -55,14 +55,30 @@ Testing different amount of epochs was also done and timed to see how the increa
 
 \subsubsection{Neural network for classification}
 
+Training our neural network with the MNIST dataset, we've classified handwritten digits with low success. Figure \ref{fig:mnist_predictions} show 9 randomly selected samples and our prediction of them:
+
+\begin{figure}
+    \centering
+    \includegraphics{}
+    \caption{Caption}
+    \label{fig:my_label}
+\end{figure}
+
 \subsection{Regression}
+\subsubsection{Stochastic gradient decent}
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../assets/etas_vs_mse.png}
+    \caption{The MSE as a function of $\log_10(\eta)$ for $d=3$, }
+    \label{fig:etas_vs_mse}
+\end{figure}
+
 \subsubsection{Neural network for regression}
-The franke function was used as regression goal.. continue on this after lunch.
+Figure \ref{fig:result_nn_plots} shows the approximation of Franke's function by performing regression with the nerural network, plotted in 3D. The plots have been calculated by using different activation functions. The used design matrix goes up to degree $12$.
 
-Insert the actual frankeplot here, and make sure the result pictures are correct.
+The activation function that performed best was the leaky RELU function, followed by the sigmoid function. The worst activation function was the ordinary RELU activation function.
 
-
-\begin{figure}[htb!]
+\begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
@@ -73,18 +89,19 @@ Insert the actual frankeplot here, and make sure the result pictures are correct
     \quad
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[trim=2.4cm 1cm 1.4cm 1cm, clip,width=1.1\textwidth]{../assets/nn_sigmoid_franke_plot.png}
+        \includegraphics[trim=2.4cm 1cm 1.4cm 1cm, clip,width=1.1\textwidth]{../assets/nn_relu_franke_plot.png}
         \caption{RELU}
     \end{subfigure}
     
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[trim=2.4cm 1cm 1.4cm 1cm, clip,width=1.1\textwidth]{../assets/nn_sigmoid_franke_plot.png}
-        \caption{Leaky franke}
+        \includegraphics[trim=2.4cm 1cm 1.4cm 1cm, clip,width=1.1\textwidth]{../assets/nn_leaky_franke_plot.png}
+        \caption{Leaky RELU}
     \end{subfigure}
-    \caption{Prediction of the data shown in figure \ref{fig:result_actual_plot} implementing different activation functions in the neural network}
-    \label{fig:result_franke_plots}
+    \caption{Prediction of Franke' function using a neural network, with different activation functions.}
+    \label{fig:result_nn_plots}
 \end{figure}
+
 
 
 
