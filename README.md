@@ -1,3 +1,5 @@
+import foobar
+
 #Project 2- FYS-STK4155-Applied Machine Learning an data analysis
 
 ##Description
