@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from prettytable import PrettyTable
-from sklearn.linear_model import SGDRegressor
+from sklearn.linear_model import SGDRegressor, Ridge
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 
@@ -45,7 +45,13 @@ y_test=np.array(y_test)
 clf_ = SGDRegressor()
 clf_.fit(x_train, y_train)
 
-print('SkLearn Mean Squared Error :',mean_squared_error(y_test, clf_.predict(x_test)))
+print('SkLearn Mean Squared Error OLS :',mean_squared_error(y_test, clf_.predict(x_test)))
+
+clf_ = Ridge(solver='sag') # Stochastic Average Gradient descent solver
+clf_.fit(x_train, y_train)
+
+print('SkLearn Mean Squared Error Ridge :',mean_squared_error(y_test, clf_.predict(x_test)))
+
 
 # SkLearn SGD classifier predicted weight matrix
 sklearn_w=clf_.coef_
