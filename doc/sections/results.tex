@@ -3,8 +3,8 @@
 \begin{document}
 \section{Results}
 \subsection{Classification}
-\subsubsection{Logistic regression on the cancer data set}
-The classification problem with the breast cancer data set was done by sorting the patients into two piles. One with a cancerous tumour and one without a cancerous tumour. As said in section \ref{sec:3logreg} the data is sent into the SGD algorithm. Along with the data, there is two other variables sent into the function, amount of epochs and number of mini batches. Both the two variables have an important role on the accuracy. Therefore the accuracy was plotted as functions of the two variables, showing optimum parameters without increasing the computational complexity too much. The results from the accuracy plots can be seen in figure \ref{fig:accvsepochvsmb}. This was calculated with step sizes of 10 for both epochs and mini batches in the intervals [1-150] and [1-200].
+\subsubsection{Logistic regression on the cancer dataset}
+The classification problem with the breast cancer dataset was done by sorting the patients into two piles. One with a cancerous tumour and one without a cancerous tumour. As said in section \ref{sec:3logreg} the data is sent into the SGD algorithm. Along with the data, there is two other variables sent into the function, amount of epochs and number of mini batches. Both the two variables have an important role on the accuracy. Therefore the accuracy was plotted as functions of the two variables, showing optimum parameters without increasing the computational complexity too much. The results from the accuracy plots can be seen in figure \ref{fig:accvsepochvsmb}. This was calculated with step sizes of 10 for both epochs and mini batches in the intervals [1-150] and [1-200].
 
 
 
@@ -30,9 +30,9 @@ The classification problem with the breast cancer data set was done by sorting t
    \label{fig:accvsepochvsmb}
 \end{figure} 
 
-Regarding the classification of the data set, the chosen number of mini batches, and amount of epochs was set to 35 and 140 respectively. This was because the accuracy stops to increase around these values in figure \ref{fig:accvsepochvsmb}, without being too computational complex. 
+Regarding the classification of the dataset, the chosen number of mini batches, and amount of epochs was set to 35 and 140 respectively. This was because the accuracy stops to increase around these values in figure \ref{fig:accvsepochvsmb}, without being too computational complex. 
 
-The accuracy of the self written code applied to the Wisconsin breast cancer data set with 35 mini batches and 140 epochs gave an accuracy of 0.965. The same data set classified by scikit-learn gave an accuracy of 0.982.
+The accuracy of the self written code applied to the Wisconsin breast cancer dataset with 35 mini batches and 140 epochs gave an accuracy of 0.965. The same dataset classified by scikit-learn gave an accuracy of 0.982.
 
 Testing different amount of epochs was also done and timed to see how the increase of epochs afects the time to run the algorithms. The result of this can be seen in table \ref{tab:timetime}.
 
@@ -55,13 +55,13 @@ Testing different amount of epochs was also done and timed to see how the increa
 
 \subsubsection{Neural network for classification}
 
-Training our neural network with the MNIST dataset, we've classified handwritten digits with low success. Figure \ref{fig:mnist_predictions} show 9 randomly selected samples and our prediction of them:
+Training our neural network with the MNIST dataset, we've classified handwritten digits with low success. Figure \ref{fig:mnist_predictions} shows 9 randomly selected samples and our prediction of them:
 
-\begin{figure}
+\begin{figure}[h!]
     \centering
-    \includegraphics{}
-    \caption{Caption}
-    \label{fig:my_label}
+    \includegraphics[width=\textwidth]{doc/assets/nn_sigmoid_mnist_plot.png}
+    \caption{9 randomly selected samples from the MNIST testing set and our neural networks' of them.}
+    \label{fig:mnist_predictions}
 \end{figure}
 
 \subsection{Regression}
@@ -69,9 +69,29 @@ Training our neural network with the MNIST dataset, we've classified handwritten
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.8\textwidth]{../assets/etas_vs_mse.png}
-    \caption{The MSE as a function of $\log_10(\eta)$ for $d=3$, }
+    \caption{The MSE as a function of $\log_{10}(\eta)$ for $d=3$, }
     \label{fig:etas_vs_mse}
 \end{figure}
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../assets/epochs_vs_mse.png}
+    \caption{The MSE as a function of the number of epochs for $d=3$, }
+    \label{fig:epochs_vs_mse}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Obtained MSE values using different methods.}
+\begin{tabular}{ ccccc } 
+ \toprule
+  & SkLearn SDGRegressor & SkLearn Ridge & SGD OLS & SGD Rigde \\ 
+ \midrule
+ MSE  & 0.015 & 0.008 & 0.013 & -\\
+ \bottomrule
+\end{tabular}
+\label{tab:MSE}
+\end{table}
 
 \subsubsection{Neural network for regression}
 Figure \ref{fig:result_nn_plots} shows the approximation of Franke's function by performing regression with the nerural network, plotted in 3D. The plots have been calculated by using different activation functions. The used design matrix goes up to degree $12$.

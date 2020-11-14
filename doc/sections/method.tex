@@ -2,26 +2,26 @@
 
 \begin{document}
 \section{Method}
-\subsection{Data sets}
-It is always useful to study different datasets and see how different methods work on different data sets. That is why in this article, we study three different data sets. The first data set is generated from the two-dimensional Franke's function. The second data set is the well known MNIST data set, while the last data set is the Wisconsin cancer data which can be solved as a binary problem.
+\subsection{datasets}
+It is always useful to study different datasets and see how different methods work on different datasets. That is why in this article, we study three different datasets. The first dataset is generated from the two-dimensional Franke's function. The second dataset is the well known MNIST dataset, while the last dataset is the Wisconsin cancer data which can be solved as a binary problem.
 
 \subsubsection{Franke's function}
-The data set occuring from Franke's function is produced and implemented the same way as explained in the theory and \cite{project1}.
+The dataset occuring from Franke's function is produced and implemented the same way as explained in the theory and \cite{project1}.
 
 \subsubsection{MNIST}
 The famous MNIST dataset is a collection of handwritten numbers, as $28\times 28$ grayscale images. It comes in two sets, a training set with $60,000$ images, and a testing set with $10,000$ images. In this report, we will model the inputs as a $28\times 28 = 784$-dimensional vector, and the output as a $10$-dimensional state vector, with each dimension representing the corresponding digit.
 
 \subsubsection{Wisconsin cancer data}
-The Wisconsin cancer data set is a data set providing 30 predictors for 569 patients each. Of the 569 patients, 357 possess a cancerous tumour while the 212 remaining patients do not possess cancerous tumors.
+The Wisconsin cancer dataset is a dataset providing 30 predictors for 569 patients each. Of the 569 patients, 357 possess a cancerous tumour while the 212 remaining patients do not possess cancerous tumors.
 
-The data set is easily accessed using scikit-learn. The design matrix is a 569x30 matrix while the target vector is a vector containing 569 binary values. A patient having the target value 1 represents a cancerous tumour, while the value 0 represents a non cancerous tumour. More info on how to access and use the data set can be studied at \cite{scikit-learn}.
+The dataset is easily accessed using scikit-learn. The design matrix is a 569x30 matrix while the target vector is a vector containing 569 binary values. A patient having the target value 1 represents a cancerous tumour, while the value 0 represents a non cancerous tumour. More info on how to access and use the dataset can be studied at \cite{scikit-learn}.
 
 \subsection{Logistic regression}\label{sec:3logreg}
 The implementation of the logistic regression is implemented pretty straight forward. The logistic regression functions is set up in a class containing the most important functions like the SGD, a prediction function and the learning rate.
 
-The clue within machine learning algorithms is the need to train a model. The whole data set is naturally split into test and training parts using standard scikit-learn functions. This is followed by a scaling of the data by subtracting the mean to adjust for data points with irregular values, using the same library. In the logistic regression class, the training data set used to train the model is sent into the SGD function within the class. After the training is done, the prediction is ready to be set in motion. The test data is sent into the prediction function, which returns a predicted response vector for the data set. Which then can be used to calculate the accuracy.
+The clue within machine learning algorithms is the need to train a model. The whole dataset is naturally split into test and training parts using standard scikit-learn functions. This is followed by a scaling of the data by subtracting the mean to adjust for data points with irregular values, using the same library. In the logistic regression class, the training dataset used to train the model is sent into the SGD function within the class. After the training is done, the prediction is ready to be set in motion. The test data is sent into the prediction function, which returns a predicted response vector for the dataset. Which then can be used to calculate the accuracy.
 
-Logistic regression was also implemented and performed on the same data set using nothing but the scikit-learn library. This was to see how close the self written code can compare to the regression accuracy achieved by scikit-learn.
+Logistic regression was also implemented and performed on the same dataset using nothing but the scikit-learn library. This was to see how close the self written code can compare to the regression accuracy achieved by scikit-learn.
 
 \subsection{Neural network}
 The neural network is implemented as a class containing important algorithms like the training algorithm SGD, back propagation, feed forward function; that feeds forward the input X and stores all the layer's activation's in a list, with the possibility to return the weighted inputs, which are useful in the backpropagation algorithm.
