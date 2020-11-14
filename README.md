@@ -1,10 +1,10 @@
-#Project 2- FYS-STK4155-Applied Machine Learning an data analysis
+# Project 2- FYS-STK4155-Applied Machine Learning an data analysis
 
-##Description
+## Description
 Classification and Regression, from linear and logistic regression to neural
 networks
 
-##Source structure
+## Source structure
 - `src/ffnn.py`: Class containing the feed forward neural networks
 - `src/logistic_reg.py`: Class containing the logistic regression functions
 - `src/utils.py`: Utillity functions like activation functions and such
@@ -25,7 +25,7 @@ dataset by using the neural network.
 -  `doc/main.pdf`: The report as a pdf file
 -  `doc/assets`: A folder with all the figures
 
-##Authors:
+## Authors:
 - Ida Due-Sørensen
 - Philip Karim Niane
 - Knut Magnus Aasrud
