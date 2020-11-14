@@ -10,7 +10,7 @@ The classification problem with the breast cancer dataset was done by sorting th
 
 
 
-\begin{figure}[H] 
+\begin{figure}[!htb] 
    \centering
    \begin{subfigure}[b]{0.80\textwidth}
       \centering
@@ -57,7 +57,7 @@ Testing different amount of epochs was also done and timed to see how the increa
 
 Training our neural network with the MNIST dataset, we've classified handwritten digits with low success. Figure \ref{fig:mnist_predictions} shows 9 randomly selected samples and our prediction of them:
 
-\begin{figure}[h!]
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=\textwidth]{doc/assets/nn_sigmoid_mnist_plot.png}
     \caption{9 randomly selected samples from the MNIST testing set and our neural networks' of them.}
@@ -66,28 +66,34 @@ Training our neural network with the MNIST dataset, we've classified handwritten
 
 \subsection{Regression}
 \subsubsection{Stochastic gradient decent}
-\begin{figure}[htb]
+\Cref{fig:etas_vs_mse} depicts the MSE as a function of the learning rate. 
+
+\Cref{fig:epochs_vs_mse} depicts the MSE as a function of the number of epochs. 
+
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=0.8\textwidth]{../assets/etas_vs_mse.png}
-    \caption{The MSE as a function of $\log_{10}(\eta)$ for $d=3$, }
+    \caption{The MSE as a function of $\log_{10}(\eta)$ for $d=3$, 1000 epochs and a batch size of 10.}
     \label{fig:etas_vs_mse}
 \end{figure}
 
-\begin{figure}[htb]
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=0.8\textwidth]{../assets/epochs_vs_mse.png}
-    \caption{The MSE as a function of the number of epochs for $d=3$, }
+    \caption{The MSE as a function of the number of epochs for $d=3$, learning rate of 0.1 and a batch size of 10.}
     \label{fig:epochs_vs_mse}
 \end{figure}
 
-\begin{table}[H]
+When comparing our implemented SGD regressor to SkLearn's SGDRegressor and Ridge, we see from \cref{tab:MSE} that the lowest MSE value is obtained for SkLearn's Ridge function.
+
+\begin{table}[!htb]
 \centering
-\caption{Obtained MSE values using different methods.}
-\begin{tabular}{ ccccc } 
+\caption{Obtained MSE values using different methods. The lowest MSE value is obtained using SkLearn's Ridge function.}
+\begin{tabular}{ cccc } 
  \toprule
-  & SkLearn SDGRegressor & SkLearn Ridge & SGD OLS & SGD Rigde \\ 
+  & SkLearn SGDRegressor & SkLearn Ridge & SGD OLS \\ 
  \midrule
- MSE  & 0.015 & 0.008 & 0.013 & -\\
+ MSE  & 0.015 & 0.008 & 0.013 \\
  \bottomrule
 \end{tabular}
 \label{tab:MSE}
@@ -98,7 +104,7 @@ Figure \ref{fig:result_nn_plots} shows the approximation of Franke's function by
 
 The activation function that performed best was the leaky RELU function, followed by the sigmoid function. The worst activation function was the ordinary RELU activation function.
 
-\begin{figure}[H]
+\begin{figure}[!htb]
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
