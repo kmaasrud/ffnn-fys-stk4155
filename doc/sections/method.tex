@@ -24,13 +24,10 @@ The clue within machine learning algorithms is the need to train a model. The wh
 Logistic regression was also implemented and performed on the same dataset using nothing but the scikit-learn library. This was to see how close the self written code can compare to the regression accuracy achieved by scikit-learn.
 
 \subsection{Neural network}
-The neural network is implemented as a class containing important algorithms like the training algorithm SGD, back propagation, feed forward function; that feeds forward the input X and stores all the layer's activation's in a list, with the possibility to return the weighted inputs, which are useful in the backpropagation algorithm.
+The neural network is implemented as a class containing important algorithms like the training algorithm SGD, back propagation and feed forward function - that feeds forward the input $X$ as well as storing the layer's activations.
 
-The algorithms are implemented according to the theory about neural networks. The neural network is also implemented with the option to choose the amount of layers and neurons within each layer. This is really practical when switching between datasets. This is because the problem to be solved often gives different amounts of neurons in the output layer logical to use. For classification of numbers, it was logical to use an output layer with ten neurons, one for each digit. To classify binary problems there would be enough with one neuron as the output layer. Either the neuron is "yes" or "no".
+The algorithms are implemented according to the theory about neural networks. The neural network is also implemented with the option to choose the amount of layers and neurons within each layer. This is crucial for switching between datasets, where different layer structures might be necessary to optimize the convergence rate of the predictions.
 
-The neural network is having a variety of different variables to be chosen. The parameters are the amount of epochs, size of mini-batches that is sent into the SGD function, the learning rate, activation function, the cost function of the network and the activation function for the last layer.
-
-
-
+The neural network has a variety of different variables to be chosen. The parameters are the amount of epochs, the size of the mini-batches, the learning rate, which activation function to use, which cost function to use and the activation function for the last layer.
 \end{document}
 
